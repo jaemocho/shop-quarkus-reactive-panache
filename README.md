@@ -1,4 +1,4 @@
-# shop
+# shop (작성 중...)
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 

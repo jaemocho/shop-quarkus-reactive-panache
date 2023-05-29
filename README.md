@@ -1,5 +1,56 @@
 # shop (작성 중...)
 
+> Import API list
+
+```
+    [framework]
+    quarkus-resteasy-reactive
+    quarkus-arc(CDI dependency injection)
+    
+    [docs]
+    quarkus-smallrye-openapi
+
+    [db]
+    quarkus-hibernate-reactive-panache
+    quarkus-reactive-pg-client
+    spring-boot-starter-data-redis
+
+    [test]
+    quarkus-junit5
+
+```
+
+> Project Map
+
+```
+- seq
+  + common                  … exception/auth 
+    + exception             … custom exception handler 
+  + config                  … config(cors/jpa/profile/security/swagger)
+  + data                    … data
+    + dao                   … database access layer
+    + dto                   … layer간 data 전송 객체
+    + entity                … database table
+    + repository            … PanacheRepository
+  + service                 … service layer
+  + web                     … presentation layer
+  ```
+
+
+> Reactive web 
+  
+  - 원본 https://github.com/jaemocho/seq shop 부분을 반응형 웹으로 refactoring
+
+  
+> API Test (swagger)
+
+ - application 기동 후 아래 page 접속 
+ - http://localhost:8080/swagger-ui/index.html#/ 
+    ![default](image/swagger_main.PNG)
+
+
+> 기본 안내 사항 
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .

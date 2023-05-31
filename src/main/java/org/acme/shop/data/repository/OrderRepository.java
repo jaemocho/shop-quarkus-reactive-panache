@@ -15,7 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class OrderRepository implements PanacheRepositoryBase<Order, Long>{
     
     public Uni<List<Order>> findByOrderDateLessThan(Date orderDate) {
-        return list("OrderDate", orderDate);
+        return list("orderDate < ?1", orderDate);
     }
 
     public Uni<List<Order>> findByOrderDateGreaterThan(Date orderDate){

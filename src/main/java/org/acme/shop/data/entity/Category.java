@@ -36,7 +36,7 @@ public class Category{
     @OneToMany(mappedBy = "category" , cascade = CascadeType.PERSIST)
     private List<Item> items = new ArrayList<Item>();
 
-    public void addItemEntity(Item item){
+    public void addItem(Item item){
         this.items.add(item);
 
         if(item.getCategory() != this) {

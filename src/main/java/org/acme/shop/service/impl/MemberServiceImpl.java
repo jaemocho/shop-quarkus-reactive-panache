@@ -20,7 +20,7 @@ import jakarta.inject.Inject;
 public class MemberServiceImpl implements MemberService{
     
     @Inject
-    MemberDAO memberPersistencePort;
+    MemberDAO memberDAO;
 
     @WithTransaction
     public Uni<Member> addMember(ReqMemberDto reqMemberDto) throws ShopException {
@@ -29,7 +29,7 @@ public class MemberServiceImpl implements MemberService{
         memberUni = vaildateDuplicateMember(memberUni);
         return memberUni.onItem()
                     .ifNull().continueWith(newMember)
-                    .flatMap(m -> memberPersistencePort.save(m));
+                    .flatMap(m -> memberDAO.save(m));
     }
 
     private Member createNewMember(ReqMemberDto reqMemberDto) {
@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     private Uni<Member> getMember(String memberId) {
-        return memberPersistencePort.findById(memberId);
+        return memberDAO.findById(memberId);
     }
 
     private Uni<Member> vaildateDuplicateMember(Uni<Member> memberUni) {
@@ -57,7 +57,7 @@ public class MemberServiceImpl implements MemberService{
         Uni<Member> memberUni = getMember(id);
         memberUni = nullCheck(memberUni);
         return memberUni.onItem()
-                        .ifNotNull().transformToUni( m -> memberPersistencePort.delete(m));
+                        .ifNotNull().transformToUni( m -> memberDAO.delete(m));
     }
     
     private Uni<Member> nullCheck(Uni<Member> memberUni) {
@@ -67,7 +67,7 @@ public class MemberServiceImpl implements MemberService{
 
     @WithTransaction
     public Uni<List<Member>> getAllMember() {
-        return memberPersistencePort.findAll();
+        return memberDAO.findAll();
     }
 
     public Uni<Member> getMemberById(String id){
@@ -80,10 +80,8 @@ public class MemberServiceImpl implements MemberService{
         Uni<Member> memberUni = getMember(id);
         memberUni = nullCheck(memberUni);
         return memberUni.onItem()
-                        .ifNotNull().transformToUni( 
-                            m -> { m.updateMember(reqMemberDto.getAddress(), reqMemberDto.getPhoneNumber());
-                                    return memberPersistencePort.save(m); 
-                                });
+                        .ifNotNull().invoke( 
+                            m -> { 
+                                m.updateMember(reqMemberDto.getAddress(), reqMemberDto.getPhoneNumber());});
     }   
-
 }

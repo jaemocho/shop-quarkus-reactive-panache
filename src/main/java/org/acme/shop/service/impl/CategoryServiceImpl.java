@@ -18,12 +18,12 @@ import jakarta.inject.Inject;
 public class CategoryServiceImpl implements CategoryService{
     
     @Inject
-    CategoryDAO categoryPersistencePort;
+    CategoryDAO categoryDAO;
 
     @WithTransaction
     public Uni<Category> addCategory(ReqCategoryDto reqCategoryDto) {
         Category category = createNewCategoryEntity(reqCategoryDto);
-        return categoryPersistencePort.save(category);
+        return categoryDAO.save(category);
     }
 
     private Category createNewCategoryEntity(ReqCategoryDto reqCategoryDto){
@@ -39,11 +39,11 @@ public class CategoryServiceImpl implements CategoryService{
         categoryUni = nullCheck(categoryUni);
         return categoryUni
                 .onItem().ifNotNull()
-                .transformToUni(c -> categoryPersistencePort.delete(c));
+                .transformToUni(c -> categoryDAO.delete(c));
     }
 
     private Uni<Category> getCategory(Long id) {
-        return categoryPersistencePort.findById(id);
+        return categoryDAO.findById(id);
     }
 
     private Uni<Category> nullCheck(Uni<Category> categoryUni) {
@@ -54,11 +54,11 @@ public class CategoryServiceImpl implements CategoryService{
 
     @WithTransaction
     public Uni<List<Category>> getAllCategory() {
-        return categoryPersistencePort.findAll();
+        return categoryDAO.findAll();
     }
 
     public Uni<List<Category>> getCategoryByName(String name) {
-        return categoryPersistencePort.findByName(name);
+        return categoryDAO.findByName(name);
     }
 
     public Uni<Category> getCategoryById(Long id) {

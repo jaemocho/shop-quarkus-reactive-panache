@@ -20,18 +20,18 @@ import jakarta.inject.Inject;
 public class ItemServiceImpl implements ItemService{
     
     @Inject
-    ItemDAO itemPersistencePort;
+    ItemDAO itemDAO;
 
     @Inject
-    CategoryDAO categoryPersistencePort;
+    CategoryDAO categoryDAO;
 
     @WithTransaction
     public Uni<Item> addItem(ReqItemDto reqItemDto) {
         Item item = createNewItem(reqItemDto);
-        Uni<Category> categoryUni = categoryPersistencePort.findById(reqItemDto.getCategoryId());
+        Uni<Category> categoryUni = categoryDAO.findById(reqItemDto.getCategoryId());
         return categoryUni.onItem()
                 .transformToUni( c -> { item.setCategory(c);
-                                   return itemPersistencePort.save(item);
+                                   return itemDAO.save(item);
                                 });
     }
 
@@ -48,11 +48,11 @@ public class ItemServiceImpl implements ItemService{
     public Uni<Void> removeItem(Long id) throws ShopException {
         Uni<Item> itemUni = getItem(id);
         itemUni = nullCheck(itemUni);
-        return itemUni.onItem().transformToUni(i -> itemPersistencePort.delete(i));
+        return itemUni.onItem().transformToUni(i -> itemDAO.delete(i));
     }
 
     public Uni<Item> getItem(Long id) {
-        return itemPersistencePort.findById(id);
+        return itemDAO.findById(id);
     }
 
     private Uni<Item> nullCheck(Uni<Item> itemUni) {
@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemService{
 
     @WithTransaction
     public Uni<List<Item>> getAllItem() {
-        return itemPersistencePort.findAll();
+        return itemDAO.findAll();
     }
 
     public Uni<Item> getItemById(Long id) throws ShopException {
@@ -71,7 +71,7 @@ public class ItemServiceImpl implements ItemService{
     }
 
     public Uni<List<Item>> getItemByCategoryId(Long id) {
-        return itemPersistencePort.findByCategoryId(id);
+        return itemDAO.findByCategoryId(id);
     }
 
     @WithTransaction
@@ -81,8 +81,8 @@ public class ItemServiceImpl implements ItemService{
             .invoke(i -> i.updateItem(reqItemDto.getName(), reqItemDto.getPrice(), reqItemDto.getRemainQty()));
     }
 
-    public Uni<Item> getItemForUpdate(Long id) {
-        return nullCheck(itemPersistencePort.findByIdForUpdate(id));
+    public Uni<Item> getItemForUpdate(Long id) throws ShopException{
+        return nullCheck(itemDAO.findByIdForUpdate(id));
     }
 
 

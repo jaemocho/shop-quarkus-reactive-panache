@@ -29,10 +29,10 @@ import jakarta.inject.Inject;
 public class OrderServiceImpl implements OrderService {
 
     @Inject
-    OrderDAO orderPersistencePort;
+    OrderDAO orderDAO;
     
     @Inject
-    ItemDAO itemPersistencePort;
+    ItemDAO itemDAO;
 
     @Inject
     MemberService memberService;
@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
                             .invoke(m -> order.setMember(m))
                             .map(m -> order);
         orderUni = addOrderItemToOrder(reqOrderDto, order, orderUni);
-        return orderUni.flatMap(o -> orderPersistencePort.save(o));
+        return orderUni.flatMap(o -> orderDAO.save(o));
     }
 
     private Order createNewOrder() {
@@ -99,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     public Uni<Order> getOrderInfoByOrderId(Long orderId) throws ShopException {
-        Uni<Order> orderUni = orderPersistencePort.findOrderInfoByOrderId(orderId);
+        Uni<Order> orderUni = orderDAO.findOrderInfoByOrderId(orderId);
         return nullCheck(orderUni);
     }
 
@@ -109,12 +109,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public Uni<List<Order>> getOrderInfoByMemberId(String memberId) {
-        return orderPersistencePort.findOrderInfoByMemberId(memberId);
+        return orderDAO.findOrderInfoByMemberId(memberId);
     }
 
     @WithTransaction
     public Uni<Void> cancelOrder(Long orderId) throws ShopException {
-        Uni<Order> orderUni = orderPersistencePort.findOrderInfoByOrderId(orderId);
+        Uni<Order> orderUni = orderDAO.findOrderInfoByOrderId(orderId);
         orderUni = nullCheck(orderUni);
         orderUni = orderUni.invoke(o -> vaildateOrderStateForCancel(o))
                 .invoke(o -> updateOrderStatus(o, OrderState.CANCEL));
@@ -148,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
 
     // public Long updateOrderStatus(Long orderId, OrderState orderState) throws ShopException {
     //     // order 는 공유자원이 아니라 for update 없이 
-    //     Order order = orderPersistencePort.findById(orderId);
+    //     Order order = orderDAO.findById(orderId);
     //     CommonUtils.nullCheckAndThrowException(order, Order.class.getName());
     //     updateOrderStatus(order, orderState);
     //     return orderId;

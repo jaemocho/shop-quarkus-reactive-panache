@@ -23,6 +23,6 @@ public interface ItemService {
 
     public Uni<Item> getItem(Long id);
 
-    public Uni<Item> getItemForUpdate(Long id);
+    public Uni<Item> getItemForUpdate(Long id) throws ShopException;
 
 }

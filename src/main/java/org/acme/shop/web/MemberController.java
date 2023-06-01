@@ -19,6 +19,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 @ApplicationScoped
 @Path("/api/v1/shop")
@@ -29,54 +30,49 @@ public class MemberController {
 
     @POST
     @Path("/member")
-    public Uni<RespMemberDto> join(ReqMemberDto reqMemberDto) throws ShopException {
+    public Uni<Response> join(ReqMemberDto reqMemberDto) throws ShopException {
         return memberService.addMember(reqMemberDto)
-                .onItem()
-                .transform(m -> m != null ? entityToRespDto(m) : null);
-        
+                .map(m -> Response.created(
+                                    UriBuilder.fromResource(MemberController.class)
+                                            .build("/member/" + m.getId())
+                                    ).entity(entityToRespDto(m))
+                                    .build());
     }
 
     @DELETE
     @Path("/member/{id}")
     public Uni<Response> removeMember(@PathParam("id") String id) throws ShopException {
         return memberService.removeMember(id)
-                .onItem()
-                .transform(m -> Response.ok(m).build());
+                    .map(m -> Response.ok(m).build());
     }
 
     @GET
     @Path("/member/{id}")
-    public Uni<RespMemberDto> getMemberById(@PathParam("id") String id) throws ShopException{
+    public Uni<Response> getMemberById(@PathParam("id") String id) throws ShopException{
         return memberService.getMemberById(id)
-               .onItem()
-                .transform(m -> entityToRespDto(m));      
+                        .map(m -> Response.ok(entityToRespDto(m)).build());      
     }
 
     @PUT
     @Path("/member/{id}")
-    public Uni<RespMemberDto> updateMember(@PathParam("id") String id, ReqMemberDto reqMemberDto) throws ShopException {
+    public Uni<Response> updateMember(@PathParam("id") String id, ReqMemberDto reqMemberDto) throws ShopException {
         return memberService.updateMember(id, reqMemberDto)
-                .onItem()
-                .transform(m -> m != null ? entityToRespDto(m) : null);
+                        .map(m -> Response.ok(entityToRespDto(m)).build());      
     }
 
     @GET
     @Path("/members")
-    public Uni<List<RespMemberDto>> getAllMember() {
+    public Uni<Response> getAllMember() {
         return memberService.getAllMember()
-                .onItem()
-                .transform(f -> entityToRespDto(f));
+                    .map(m -> Response.ok(entityToRespDto(m)).build());      
     }
 
 
     private List<RespMemberDto> entityToRespDto(List<Member> memberEntities) {
-        
         List<RespMemberDto> respMemberDtos = new ArrayList<RespMemberDto>();
-
         for(Member m : memberEntities) {
             respMemberDtos.add(entityToRespDto(m));
         }
-
         return respMemberDtos;
     }
 

@@ -11,16 +11,19 @@ import org.acme.shop.data.entity.Category;
 import org.acme.shop.service.CategoryService;
 import org.jboss.resteasy.reactive.RestQuery;
 
-import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 @ApplicationScoped
 @Path("/api/v1/shop")
@@ -31,10 +34,16 @@ public class CategoryController {
 
     @POST
     @Path("/category")
-    public Uni<RespCategoryDto> createCategory(ReqCategoryDto reqCategoryDto) {
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Uni<Response> createCategory(ReqCategoryDto reqCategoryDto) {
         return categoryService.addCategory(reqCategoryDto)
-                            .onItem()
-                            .transform(c -> entityToRespDto(c));
+                            .map(c ->  
+                                Response.created(
+                                    UriBuilder.fromResource(CategoryController.class)
+                                    .build("/category/" + c.getId())
+                                ).entity(entityToRespDto(c))
+                                .build());
                 // .transform(id -> URI.create("/category/"+id)) 
                 // .onItem()
                 // .transform(uri -> Response.created(uri).build());           
@@ -44,32 +53,27 @@ public class CategoryController {
     @Path("/category/{id}")
     public Uni<Response> removeCategory(@PathParam("id") Long id) throws ShopException {
         return categoryService.removeCategory(id)
-                .onItem()
-                .transform(c -> Response.ok(c).build());
+                            .map(c -> Response.ok(c).build());
     }
 
     @GET
     @Path("/category/{id}")
-    public Uni<RespCategoryDto> getCategoryById(@PathParam("id") Long id) throws ShopException{
-        Log.info("category controller ");
+    public Uni<Response> getCategoryById(@PathParam("id") Long id) throws ShopException{
         return categoryService.getCategoryById(id)
-                            .onItem()
-                            .transform(c -> entityToRespDto(c));
+                            .map(c -> Response.ok(entityToRespDto(c)).build());
     }
 
     @GET
     @Path("/categorys")
-    public Uni<List<RespCategoryDto>> getCategoryByName(@RestQuery String name) throws ShopException{
+    public Uni<Response> getCategoryByName(@RestQuery String name) throws ShopException{
 
         if ( name == null || "".equals(name)) {
             return categoryService.getAllCategory()
-                                .onItem()
-                                .transform(c -> entityToRespDto(c));
+                                .map(c -> Response.ok(entityToRespDto(c)).build());
         }
 
         return categoryService.getCategoryByName(name)
-                                .onItem()
-                                .transform(c -> entityToRespDto(c));
+                                .map(c -> Response.ok(entityToRespDto(c)).build());
     }
 
     private List<RespCategoryDto> entityToRespDto(List<Category> categories){

@@ -21,6 +21,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 @ApplicationScoped
 @Path("/api/v1/shop")
@@ -31,47 +32,46 @@ public class ItemController {
 
     @POST
     @Path("/item")
-    public Uni<RespItemDto> createItem(ReqItemDto reqItemDto) {
+    public Uni<Response> createItem(ReqItemDto reqItemDto) {
         return itemService.addItem(reqItemDto)
-                .onItem()
-                .transform(i -> entityToRespDto(i));
+                .map(i -> 
+                    Response.created(
+                        UriBuilder.fromResource(ItemController.class)
+                        .build("/item/" + i.getId())
+                        ).entity(entityToRespDto(i))
+                        .build());                        
     }
 
     @DELETE
     @Path("/item/{id}")
     public Uni<Response> removeItem(@PathParam("id") Long id) throws ShopException {
         return itemService.removeItem(id)
-                .onItem()
-                .transform(i -> Response.ok(i).build());
+                .map(i -> Response.ok(i).build());
     }
 
     @GET
     @Path("/item/{id}")
-    public Uni<RespItemDto> getItemById(@PathParam("id") Long id) throws ShopException{
+    public Uni<Response> getItemById(@PathParam("id") Long id) throws ShopException{
         return itemService.getItemById(id)
-                .onItem()
-                .transform(i -> entityToRespDto(i));
+                .map(i -> Response.ok(entityToRespDto(i)).build());
     }
 
     @GET
     @Path("/items")
-    public Uni<List<RespItemDto>> getItemByCategoryId(@RestQuery Long categoryId) throws ShopException{
+    public Uni<Response> getItemByCategoryId(@RestQuery Long categoryId) throws ShopException{
         if(categoryId == null) {
             return itemService.getAllItem()
-                    .onItem()
-                    .transform(i -> entityToRespDto(i));
+                    .map(i -> Response.ok(entityToRespDto(i)).build());
         }
         return itemService.getItemByCategoryId(categoryId)
-                    .onItem()
-                    .transform(i -> entityToRespDto(i));
+                    .map(i -> Response.ok(entityToRespDto(i)).build());
     }
 
     @PUT
     @Path("/item/{id}")
-    public Uni<RespItemDto> updateItem(@PathParam("id") Long id, ReqItemDto reqItemDto) throws ShopException {
+    public Uni<Response> updateItem(@PathParam("id") Long id, ReqItemDto reqItemDto) throws ShopException {
         return itemService.updateItem(id, reqItemDto)
-            .onItem()
-            .transform(i -> entityToRespDto(i));
+                    .map(i -> Response.ok(entityToRespDto(i)).build());
     }
 
     private List<RespItemDto> entityToRespDto(List<Item> items){

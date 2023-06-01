@@ -19,6 +19,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 @ApplicationScoped
 @Path("/api/v1/shop")
@@ -29,34 +30,34 @@ public class OrderController {
 
     @POST
     @Path("/order")
-    public Uni<RespOrderDto> createOrder(ReqOrderDto reqOrderDto) throws ShopException{
+    public Uni<Response> createOrder(ReqOrderDto reqOrderDto) throws ShopException{
         return orderService.createOrder(reqOrderDto)
-                .onItem()
-                .transform(o -> entityToRespDto(o));
+                .map(o -> Response.created(
+                                    UriBuilder.fromResource(OrderController.class)
+                                        .build("/order/" + o.getId())
+                                ).entity(entityToRespDto(o))
+                                .build());
     }
 
     @DELETE
     @Path("/order/{id}")
     public Uni<Response> cancelOrder(@PathParam("id") Long id) throws ShopException {
         return orderService.cancelOrder(id)
-                .onItem()
-                .transform(o -> Response.ok(o).build());
+                            .map(o -> Response.ok(o).build());
     }
 
     @GET
     @Path("/order/{id}")
-    public Uni<RespOrderDto> getOrderInfoByOrderId(@PathParam("id") Long id) throws ShopException {
+    public Uni<Response> getOrderInfoByOrderId(@PathParam("id") Long id) throws ShopException {
         return orderService.getOrderInfoByOrderId(id)
-                .onItem()
-                .transform(o -> entityToRespDto(o));
+                            .map(o -> Response.ok(entityToRespDto(o)).build());
     }
 
     @GET
     @Path("/order/member/{memberId}")
-    public Uni<List<RespOrderDto>> getOrderInfoByMemberId(@PathParam("memberId") String memberId) throws ShopException {
+    public Uni<Response> getOrderInfoByMemberId(@PathParam("memberId") String memberId) throws ShopException {
         return orderService.getOrderInfoByMemberId(memberId)
-                .onItem()
-                .transform(o -> entityToRespDto(o));
+                            .map(o -> Response.ok(entityToRespDto(o)).build());
     }
     
     private List<RespOrderDto> entityToRespDto(List<Order> orderEntities) {

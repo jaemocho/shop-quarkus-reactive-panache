@@ -13,6 +13,7 @@ import org.acme.shop.service.OrderService;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -30,7 +31,7 @@ public class OrderController {
 
     @POST
     @Path("/order")
-    public Uni<Response> createOrder(ReqOrderDto reqOrderDto) throws ShopException{
+    public Uni<Response> createOrder(@Valid ReqOrderDto reqOrderDto) throws ShopException{
         return orderService.createOrder(reqOrderDto)
                 .map(o -> Response.created(
                                     UriBuilder.fromResource(OrderController.class)

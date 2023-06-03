@@ -1,7 +1,9 @@
 package org.acme.shop.data.dto;
 
 
-import io.smallrye.common.constraint.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,13 +12,13 @@ import lombok.Getter;
 @Builder
 public class ReqItemDto {
     
-    @NotNull
+    @NotBlank
     private String name;
     
-    @NotNull
+    @NotNull @Min(0)
     private Integer price;
 
-    @NotNull
+    @NotNull @Min(0)
     private Integer remainQty;
 
     private Long categoryId;

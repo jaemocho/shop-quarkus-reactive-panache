@@ -12,6 +12,7 @@ import org.acme.shop.service.MemberService;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -30,7 +31,7 @@ public class MemberController {
 
     @POST
     @Path("/member")
-    public Uni<Response> join(ReqMemberDto reqMemberDto) throws ShopException {
+    public Uni<Response> join(@Valid ReqMemberDto reqMemberDto) throws ShopException {
         return memberService.addMember(reqMemberDto)
                 .map(m -> Response.created(
                                     UriBuilder.fromResource(MemberController.class)

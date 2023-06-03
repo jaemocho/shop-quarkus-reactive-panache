@@ -14,6 +14,7 @@ import org.jboss.resteasy.reactive.RestQuery;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -32,7 +33,7 @@ public class ItemController {
 
     @POST
     @Path("/item")
-    public Uni<Response> createItem(ReqItemDto reqItemDto) {
+    public Uni<Response> createItem(@Valid ReqItemDto reqItemDto) {
         return itemService.addItem(reqItemDto)
                 .map(i -> 
                     Response.created(

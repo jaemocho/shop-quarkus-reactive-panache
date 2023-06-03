@@ -14,6 +14,7 @@ import org.jboss.resteasy.reactive.RestQuery;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -36,7 +37,7 @@ public class CategoryController {
     @Path("/category")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Uni<Response> createCategory(ReqCategoryDto reqCategoryDto) {
+    public Uni<Response> createCategory(@Valid ReqCategoryDto reqCategoryDto) {
         return categoryService.addCategory(reqCategoryDto)
                             .map(c ->  
                                 Response.created(

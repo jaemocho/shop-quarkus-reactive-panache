@@ -1,6 +1,6 @@
 package org.acme.shop.data.dto;
 
-import io.smallrye.common.constraint.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,13 +8,13 @@ import lombok.Getter;
 @Builder
 public class ReqMemberDto {
     
-    @NotNull
+    @NotBlank
     private String id;
 
-    @NotNull
+    @NotBlank
     private String address;
 
-    @NotNull
+    @NotBlank
     private String phoneNumber;
 
 }

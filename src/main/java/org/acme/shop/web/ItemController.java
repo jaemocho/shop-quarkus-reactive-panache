@@ -16,6 +16,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -47,14 +48,14 @@ public class ItemController {
 
     @DELETE
     @Path("/item/{id}")
-    public Uni<Response> removeItem(@PathParam("id") Long id) throws ShopException {
+    public Uni<Response> removeItem(@NotNull @PathParam("id") Long id) throws ShopException {
         return itemService.removeItem(id)
                 .map(i -> Response.ok(i).build());
     }
 
     @GET
     @Path("/item/{id}")
-    public Uni<Response> getItemById(@PathParam("id") Long id) throws ShopException{
+    public Uni<Response> getItemById(@NotNull @PathParam("id") Long id) throws ShopException{
         return itemService.getItemById(id)
                 .map(i -> Response.ok(entityToRespDto(i)).build());
     }
@@ -72,7 +73,7 @@ public class ItemController {
 
     @PUT
     @Path("/item/{id}")
-    public Uni<Response> updateItem(@PathParam("id") Long id, ReqItemDto reqItemDto) throws ShopException {
+    public Uni<Response> updateItem(@NotNull @PathParam("id") Long id, ReqItemDto reqItemDto) throws ShopException {
         return itemService.updateItem(id, reqItemDto)
                     .map(i -> Response.ok(entityToRespDto(i)).build());
     }

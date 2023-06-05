@@ -14,6 +14,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -44,21 +45,21 @@ public class MemberController {
 
     @DELETE
     @Path("/member/{id}")
-    public Uni<Response> removeMember(@PathParam("id") String id) throws ShopException {
+    public Uni<Response> removeMember(@NotNull @PathParam("id") String id) throws ShopException {
         return memberService.removeMember(id)
                     .map(m -> Response.ok(m).build());
     }
 
     @GET
     @Path("/member/{id}")
-    public Uni<Response> getMemberById(@PathParam("id") String id) throws ShopException{
+    public Uni<Response> getMemberById(@NotNull @PathParam("id") String id) throws ShopException{
         return memberService.getMemberById(id)
                         .map(m -> Response.ok(entityToRespDto(m)).build());      
     }
 
     @PUT
     @Path("/member/{id}")
-    public Uni<Response> updateMember(@PathParam("id") String id, ReqMemberDto reqMemberDto) throws ShopException {
+    public Uni<Response> updateMember(@NotNull @PathParam("id") String id, ReqMemberDto reqMemberDto) throws ShopException {
         return memberService.updateMember(id, reqMemberDto)
                         .map(m -> Response.ok(entityToRespDto(m)).build());      
     }

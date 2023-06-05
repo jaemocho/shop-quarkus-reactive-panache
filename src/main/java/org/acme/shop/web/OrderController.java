@@ -15,6 +15,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -44,21 +45,21 @@ public class OrderController {
 
     @DELETE
     @Path("/order/{id}")
-    public Uni<Response> cancelOrder(@PathParam("id") Long id) throws ShopException {
+    public Uni<Response> cancelOrder(@NotNull @PathParam("id") Long id) throws ShopException {
         return orderService.cancelOrder(id)
                             .map(o -> Response.ok(o).build());
     }
 
     @GET
     @Path("/order/{id}")
-    public Uni<Response> getOrderInfoByOrderId(@PathParam("id") Long id) throws ShopException {
+    public Uni<Response> getOrderInfoByOrderId(@NotNull @PathParam("id") Long id) throws ShopException {
         return orderService.getOrderInfoByOrderId(id)
                             .map(o -> Response.ok(entityToRespDto(o)).build());
     }
 
     @GET
     @Path("/order/member/{memberId}")
-    public Uni<Response> getOrderInfoByMemberId(@PathParam("memberId") String memberId) throws ShopException {
+    public Uni<Response> getOrderInfoByMemberId(@NotNull @PathParam("memberId") String memberId) throws ShopException {
         return orderService.getOrderInfoByMemberId(memberId)
                             .map(o -> Response.ok(entityToRespDto(o)).build());
     }

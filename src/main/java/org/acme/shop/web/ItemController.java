@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.acme.shop.common.exception.ShopException;
+import org.acme.shop.common.interceptor.Logging;
 import org.acme.shop.data.dto.ReqItemDto;
 import org.acme.shop.data.dto.RespItemDto;
 import org.acme.shop.data.entity.Category;
@@ -24,6 +25,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
+@Logging
 @ApplicationScoped
 @Path("/api/v1/shop")
 public class ItemController {

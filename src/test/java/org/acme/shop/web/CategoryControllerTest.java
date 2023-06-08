@@ -1,13 +1,16 @@
 package org.acme.shop.web;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.acme.shop.data.dto.ReqCategoryDto;
 import org.acme.shop.web.util.RequestAction;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.path.json.JsonPath;
@@ -18,7 +21,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.HttpMethod;
 
 
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 @QuarkusTest
 public class CategoryControllerTest {
@@ -49,7 +52,7 @@ public class CategoryControllerTest {
 
         responseJsonPath= response.jsonPath();
 
-        Assertions.assertEquals("createCategory.reqCategoryDto.name"
+        assertEquals("createCategory.reqCategoryDto.name"
                             , responseJsonPath.getString("[0].path.string"));
     }
 
@@ -66,21 +69,21 @@ public class CategoryControllerTest {
                             , null, 200);
 
         responseJsonPath = response.jsonPath();
-        Assertions.assertEquals("category1"
+        assertEquals("category1"
                             , responseJsonPath.getString("name"));
 
         // 전체 조회
         response = requestAction.doAction(HttpMethod.GET, "/api/v1/shop/categorys"
                             , null, 200);
         responseJsonPath = response.jsonPath();
-        Assertions.assertEquals(3
+        assertEquals(3
                             , responseJsonPath.<JsonPath>getList("").size());
 
         // categoryName으로 조회 
         response = requestAction.doAction(HttpMethod.GET, "/api/v1/shop/categorys?name=category2"
                             , null, 200);
         responseJsonPath = response.jsonPath();
-        Assertions.assertEquals(2
+        assertEquals(2
                                 , responseJsonPath.<JsonPath>getList("").size());
     }
 
@@ -100,7 +103,7 @@ public class CategoryControllerTest {
         response = requestAction.doAction(HttpMethod.GET, "/api/v1/shop/categorys"
                             , null, 200);
         responseJsonPath = response.jsonPath();
-        Assertions.assertEquals(2, responseJsonPath.<JsonPath>getList("").size());
+        assertEquals(2, responseJsonPath.<JsonPath>getList("").size());
     }
 
 

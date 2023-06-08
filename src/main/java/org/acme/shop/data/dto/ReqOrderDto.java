@@ -2,9 +2,9 @@ package org.acme.shop.data.dto;
 
 import java.util.List;
 
-import io.smallrye.common.constraint.NotNull;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ public class ReqOrderDto {
     @NotBlank
     private String memberId;
 
-    @NotBlank
+    @NotNull
     private List<RequestItem> requestItem;
     
     @Builder
